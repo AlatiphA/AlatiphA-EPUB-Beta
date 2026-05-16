@@ -140,13 +140,14 @@ main {
   position: relative;
 
   width: 100%;
-  height: calc(100vh - 180px);
+
+  height: 100%;
 
   overflow: hidden;
 
   background: white;
 
-  touch-action: pan-y;
+  touch-action: manipulation;
 
   -webkit-overflow-scrolling: touch;
 }
