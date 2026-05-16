@@ -8,66 +8,10 @@ html,
 body {
   width: 100%;
   height: 100%;
+
   overflow: hidden;
 
   font-family: Arial, sans-serif;
-}
-
-footer {
-  position: relative;
-
-  height: 120px;
-
-  background: #1e1e1e;
-
-  display: flex;
-  flex-direction: column;
-
-  flex-shrink: 0;
-
-  z-index: 9999;
-}
-
-.topFooter {
-  height: 60px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-
-  flex-shrink: 0;
-}
-
-.bottomFooter {
-  height: 60px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-
-  flex-shrink: 0;
-
-  border-top: 1px solid #333;
-}
-
-.bottomBtn {
-  width: 44px;
-  height: 44px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: transparent;
-
-  color: white;
-
-  font-size: 22px;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 body {
@@ -85,7 +29,9 @@ body.dark {
   flex-direction: column;
 
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
+
+  overflow: hidden;
 }
 
 header {
@@ -103,17 +49,27 @@ header {
 
   flex-shrink: 0;
 
-  z-index: 1000;
+  z-index: 9999;
+
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
 }
 
 .title {
   color: white;
+
   font-size: 18px;
+
   font-weight: bold;
 }
 
 .iconBtn {
+  width: 44px;
+  height: 44px;
+
   border: none;
+
   background: transparent;
 
   color: white;
@@ -121,9 +77,6 @@ header {
   font-size: 24px;
 
   cursor: pointer;
-
-  width: 44px;
-  height: 44px;
 }
 
 main {
@@ -131,16 +84,15 @@ main {
 
   position: relative;
 
-  overflow: hidden;
-
   min-height: 0;
+
+  overflow: hidden;
 }
 
 #viewer {
   position: relative;
 
   width: 100%;
-
   height: 100%;
 
   overflow: hidden;
@@ -166,17 +118,44 @@ body.dark #viewer {
 footer {
   position: relative;
 
-  height: 60px;
+  height: 120px;
 
   background: #1e1e1e;
+
+  display: flex;
+  flex-direction: column;
+
+  flex-shrink: 0;
+
+  z-index: 9999;
+
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.topFooter {
+  height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+
+  flex-shrink: 0;
+}
+
+.bottomFooter {
+  height: 60px;
 
   display: flex;
   align-items: center;
   justify-content: space-around;
 
-  flex-shrink: 0;
+  border-top: 1px solid #333;
 
-  z-index: 9999;
+  flex-shrink: 0;
 }
 
 .navBtn {
@@ -197,7 +176,32 @@ footer {
 
 #progressText {
   color: white;
+
   font-size: 14px;
+
+  text-align: center;
+
+  flex: 1;
+}
+
+.bottomBtn {
+  width: 44px;
+  height: 44px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: white;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar {
@@ -207,7 +211,8 @@ footer {
   left: -300px;
 
   width: 300px;
-  height: calc(100vh - 60px);
+
+  height: calc(100dvh - 60px);
 
   background: white;
 
@@ -265,56 +270,32 @@ body.dark .sidebar {
 }
 
 #toc a:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(
+    0,
+    0,
+    0,
+    0.05
+  );
 }
 
 body.dark #toc a:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(
+    255,
+    255,
+    255,
+    0.05
+  );
 }
 
-button {
-  touch-action: manipulation;
-}
-
-@media (max-width: 768px) {
-
-  .sidebar {
-    width: 85%;
-    left: -85%;
-  }
-
-  .sidebar.active {
-    left: 0;
-  }
-
-  .title {
-    font-size: 16px;
-  }
-
-  .iconBtn {
-    font-size: 22px;
-  }
-
-  .hideControls {
+.hideControls {
   opacity: 0 !important;
 
-  pointer-events: none !important;
-
   visibility: hidden !important;
+
+  pointer-events: none !important;
 }
 
-  header,
-footer {
-  transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease;
-
-  position: relative;
-
-  z-index: 9999;
-}
-
-  #navOverlay {
+#navOverlay {
   position: absolute;
 
   inset: 0;
@@ -339,5 +320,28 @@ footer {
 #rightZone {
   width: 30%;
 }
+
+button {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    width: 85%;
+    left: -85%;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .bottomBtn {
+    font-size: 20px;
+  }
 
 }
