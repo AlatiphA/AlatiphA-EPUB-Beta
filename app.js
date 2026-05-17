@@ -188,9 +188,31 @@ function startReader() {
     savedLocation || undefined
   );
 
-  rendition.themes.fontSize(
-    fontSize + "%"
-  );
+  rendition.hooks.content.register(
+  contents => {
+
+    contents.document.addEventListener(
+      "click",
+      e => {
+
+        const target =
+          e.target;
+
+        if (
+          target.closest("a")
+        ) {
+
+          return;
+        }
+
+        e.preventDefault();
+
+      },
+      true
+    );
+
+  }
+);
 
   applyTheme();
   setupReaderGestures();
