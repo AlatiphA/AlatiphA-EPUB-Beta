@@ -489,6 +489,59 @@ async function searchBook(query) {
 
 }
 
+function renderSearchResults(
+  results
+) {
+
+  searchResults.innerHTML = "";
+
+  if (!results.length) {
+
+    searchResults.innerHTML =
+      "No results found.";
+
+    return;
+
+  }
+
+  results.forEach(
+    result => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+      div.className =
+        "searchItem";
+
+      div.textContent =
+        result.snippet;
+
+      div.addEventListener(
+        "click",
+        () => {
+
+          rendition.display(
+            result.cfi
+          );
+
+          searchModal.classList.remove(
+            "active"
+          );
+
+        }
+      );
+
+      searchResults.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
 menuBtn.addEventListener(
   "click",
   () => {
@@ -652,6 +705,25 @@ closeSearch.addEventListener(
   }
 );
 
+searchInput.addEventListener(
+  "keydown",
+  e => {
+
+    if (
+      e.key === "Enter"
+    ) {
+
+      const query =
+        searchInput.value.trim();
+
+      if (!query) return;
+
+      searchBook(query);
+
+    }
+
+  }
+);
 
 if (
   "serviceWorker" in navigator
