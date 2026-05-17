@@ -380,4 +380,92 @@ button {
     font-size: 20px;
   }
 
+  #searchModal {
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0,0,0,0.6);
+
+  z-index: 20000;
+
+  display: none;
+
+  flex-direction: column;
+
+  padding: 20px;
+}
+
+#searchModal.active {
+  display: flex;
+}
+
+.searchBox {
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 15px;
+}
+
+#searchInput {
+  flex: 1;
+
+  height: 44px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 0 15px;
+
+  font-size: 16px;
+}
+
+#closeSearch {
+  width: 44px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+#searchResults {
+  flex: 1;
+
+  overflow-y: auto;
+
+  background: white;
+
+  border-radius: 12px;
+
+  padding: 10px;
+}
+
+.searchItem {
+  padding: 12px;
+
+  border-bottom: 1px solid #ddd;
+
+  cursor: pointer;
+}
+
+.searchItem:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+body.dark #searchResults {
+  background: #1e1e1e;
+
+  color: white;
+}
+
+body.dark .searchItem {
+  border-color: #333;
+}
+
 }
