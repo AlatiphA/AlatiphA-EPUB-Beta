@@ -53,6 +53,31 @@ const closeAppBtn =
     "closeAppBtn"
   );
 
+const searchBtn =
+  document.getElementById(
+    "searchBtn"
+  );
+
+const searchModal =
+  document.getElementById(
+    "searchModal"
+  );
+
+const searchInput =
+  document.getElementById(
+    "searchInput"
+  );
+
+const closeSearch =
+  document.getElementById(
+    "closeSearch"
+  );
+
+const searchResults =
+  document.getElementById(
+    "searchResults"
+  );
+
 const header =
   document.querySelector(
     "header"
@@ -385,6 +410,85 @@ function applyTheme() {
 
 }
 
+async function searchBook(query) {
+
+  searchResults.innerHTML =
+    "Searching...";
+
+  const results = [];
+
+  try {
+
+    for (
+      const item of book.spine.spineItems
+    ) {
+
+      await item.load(
+        book.load.bind(book)
+      );
+
+      const text =
+        item.document.body
+          .innerText;
+
+      const lowerText =
+        text.toLowerCase();
+
+      const lowerQuery =
+        query.toLowerCase();
+
+      if (
+        lowerText.includes(
+          lowerQuery
+        )
+      ) {
+
+        const index =
+          lowerText.indexOf(
+            lowerQuery
+          );
+
+        const snippet =
+          text.substring(
+            Math.max(
+              0,
+              index - 50
+            ),
+            index + 100
+          );
+
+        results.push({
+
+          cfi:
+            item.cfiBase,
+
+          snippet
+
+        });
+
+      }
+
+      item.unload();
+
+    }
+
+    renderSearchResults(
+      results
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    searchResults.innerHTML =
+      "Search failed.";
+
+  }
+
+}
+
 menuBtn.addEventListener(
   "click",
   () => {
@@ -520,6 +624,30 @@ closeAppBtn.addEventListener(
       window.close();
 
     }
+
+  }
+);
+
+searchBtn.addEventListener(
+  "click",
+  () => {
+
+    searchModal.classList.add(
+      "active"
+    );
+
+    searchInput.focus();
+
+  }
+);
+
+closeSearch.addEventListener(
+  "click",
+  () => {
+
+    searchModal.classList.remove(
+      "active"
+    );
 
   }
 );
