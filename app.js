@@ -113,25 +113,6 @@ const footer =
     "footer"
   );
 
-const gestureLayer =
-  document.getElementById(
-    "gestureLayer"
-  );
-
-const gestureLeft =
-  document.getElementById(
-    "gestureLeft"
-  );
-
-const gestureCenter =
-  document.getElementById(
-    "gestureCenter"
-  );
-
-const gestureRight =
-  document.getElementById(
-    "gestureRight"
-  );
 
 let rendition;
 let book;
@@ -210,7 +191,6 @@ function startReader() {
 
   
   applyTheme();
-  setupGestures();
   
   book.ready
     .then(async () => {
@@ -343,100 +323,6 @@ function sidebarIsOpen() {
 
 }
 
-function setupGestures() {
-
-  gestureLeft.addEventListener(
-    "click",
-    e => {
-
-      if (
-        sidebarIsOpen()
-      ) {
-
-        return;
-      }
-
-      e.stopPropagation();
-
-      rendition.prev();
-
-    }
-  );
-
-  gestureRight.addEventListener(
-    "click",
-    e => {
-
-      if (
-        sidebarIsOpen()
-      ) {
-
-        return;
-      }
-
-      e.stopPropagation();
-
-      rendition.next();
-
-    }
-  );
-
-  gestureCenter.addEventListener(
-    "click",
-    e => {
-
-      if (
-        sidebarIsOpen()
-      ) {
-
-        return;
-      }
-
-      e.stopPropagation();
-
-      toggleControls();
-
-    }
-  );
-
-  rendition.hooks.content.register(
-    contents => {
-
-      const doc =
-        contents.document;
-
-      doc.addEventListener(
-        "mouseover",
-        e => {
-
-          if (
-            e.target.closest("a")
-          ) {
-
-            gestureLayer.classList.add(
-              "gestureDisabled"
-            );
-
-          }
-
-        }
-      );
-
-      doc.addEventListener(
-        "mouseout",
-        () => {
-
-          gestureLayer.classList.remove(
-            "gestureDisabled"
-          );
-
-        }
-      );
-
-    }
-  );
-
-}
 
   
 function applyTheme() {
