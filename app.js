@@ -328,11 +328,11 @@ function sidebarIsOpen() {
 
 function setupReaderGestures() {
 
-  let gestureLocked = false;
+  let gestureBusy = false;
 
   rendition.on(
     "rendered",
-    () => {
+    section => {
 
       const iframe =
         viewer.querySelector(
@@ -348,7 +348,7 @@ function setupReaderGestures() {
 
       if (
         doc.body.dataset
-          .gesturesLoaded
+          .gestureReady
       ) {
 
         return;
@@ -356,18 +356,17 @@ function setupReaderGestures() {
       }
 
       doc.body.dataset
-        .gesturesLoaded = "true";
+        .gestureReady = "true";
 
       doc.addEventListener(
-        "pointerup",
+        "pointerdown",
         e => {
 
           if (
-            gestureLocked
+            gestureBusy
           ) {
 
             return;
-
           }
 
           if (
@@ -375,7 +374,18 @@ function setupReaderGestures() {
           ) {
 
             return;
+          }
 
+          const selection =
+            doc.defaultView
+              .getSelection()
+              .toString();
+
+          if (
+            selection.length > 0
+          ) {
+
+            return;
           }
 
           const target =
@@ -383,71 +393,64 @@ function setupReaderGestures() {
 
           if (
             target.closest("a") ||
-            target.closest("button")
+            target.closest("button") ||
+            target.closest("img") ||
+            target.closest("input")
           ) {
 
             return;
-
-          }
-
-          const iframeRect =
-            iframe.getBoundingClientRect();
-
-          const tapX =
-            e.clientX -
-            iframeRect.left;
-
-          const width =
-            iframeRect.width;
-
-          const leftBoundary =
-            width * 0.30;
-
-          const rightBoundary =
-            width * 0.70;
-
-          gestureLocked = true;
-
-          setTimeout(
-            () => {
-
-              gestureLocked = false;
-
-            },
-            350
-          );
-
-          if (
-            tapX <= leftBoundary
-          ) {
-
-            e.preventDefault();
-
-            e.stopPropagation();
-
-            rendition.prev();
-
-            return;
-
-          }
-
-          if (
-            tapX >= rightBoundary
-          ) {
-
-            e.preventDefault();
-
-            e.stopPropagation();
-
-            rendition.next();
-
-            return;
-
           }
 
           e.preventDefault();
 
           e.stopPropagation();
+
+          e.stopImmediatePropagation();
+
+          const rect =
+            iframe.getBoundingClientRect();
+
+          const tapX =
+            e.clientX -
+            rect.left;
+
+          const width =
+            rect.width;
+
+          const leftZone =
+            width * 0.30;
+
+          const rightZone =
+            width * 0.70;
+
+          gestureBusy = true;
+
+          setTimeout(
+            () => {
+
+              gestureBusy = false;
+
+            },
+            400
+          );
+
+          if (
+            tapX <= leftZone
+          ) {
+
+            rendition.prev();
+
+            return;
+          }
+
+          if (
+            tapX >= rightZone
+          ) {
+
+            rendition.next();
+
+            return;
+          }
 
           toggleControls();
 
