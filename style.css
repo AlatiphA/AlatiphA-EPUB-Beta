@@ -110,35 +110,6 @@ body.dark #viewer {
   border: none !important;
 }
 
-#gestureLayer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  z-index: 20;
-}
-
-#gestureLeft,
-#gestureCenter,
-#gestureRight {
-  height: 100%;
-}
-
-#gestureLeft {
-  width: 30%;
-}
-
-#gestureCenter {
-  width: 40%;
-}
-
-#gestureRight {
-  width: 30%;
-}
-
-.gestureDisabled {
-  pointer-events: none;
-}
-
 
 footer {
   position: fixed;
