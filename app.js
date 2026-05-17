@@ -837,8 +837,7 @@ closeAppBtn.addEventListener(
   "click",
   () => {
 
-    window.location.href =
-     "about:blank";
+    window.close();
 
   }
 );
