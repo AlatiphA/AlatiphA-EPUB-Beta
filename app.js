@@ -328,6 +328,8 @@ function sidebarIsOpen() {
 
 function setupReaderGestures() {
 
+  let gestureLocked = false;
+
   rendition.on(
     "rendered",
     () => {
@@ -357,8 +359,16 @@ function setupReaderGestures() {
         .gesturesLoaded = "true";
 
       doc.addEventListener(
-        "click",
+        "pointerup",
         e => {
+
+          if (
+            gestureLocked
+          ) {
+
+            return;
+
+          }
 
           if (
             sidebarIsOpen()
@@ -380,23 +390,40 @@ function setupReaderGestures() {
 
           }
 
-          const width =
-            window.innerWidth;
+          const iframeRect =
+            iframe.getBoundingClientRect();
 
-          const x =
-            e.clientX;
+          const tapX =
+            e.clientX -
+            iframeRect.left;
+
+          const width =
+            iframeRect.width;
 
           const leftBoundary =
-            width * 0.33;
+            width * 0.30;
 
           const rightBoundary =
-            width * 0.66;
+            width * 0.70;
+
+          gestureLocked = true;
+
+          setTimeout(
+            () => {
+
+              gestureLocked = false;
+
+            },
+            350
+          );
 
           if (
-            x < leftBoundary
+            tapX <= leftBoundary
           ) {
 
             e.preventDefault();
+
+            e.stopPropagation();
 
             rendition.prev();
 
@@ -405,10 +432,12 @@ function setupReaderGestures() {
           }
 
           if (
-            x > rightBoundary
+            tapX >= rightBoundary
           ) {
 
             e.preventDefault();
+
+            e.stopPropagation();
 
             rendition.next();
 
@@ -417,6 +446,8 @@ function setupReaderGestures() {
           }
 
           e.preventDefault();
+
+          e.stopPropagation();
 
           toggleControls();
 
@@ -781,7 +812,8 @@ closeAppBtn.addEventListener(
   "click",
   () => {
 
-    history.back();
+    window.location.href =
+     "about:blank";
 
   }
 );
