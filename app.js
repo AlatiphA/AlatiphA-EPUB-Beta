@@ -193,7 +193,7 @@ function startReader() {
   );
 
   applyTheme();
-  setupNavigationZones();
+  setupReaderGestures();
 
   book.ready
     .then(async () => {
@@ -330,7 +330,7 @@ function setupReaderGestures() {
 
   rendition.on(
     "rendered",
-    section => {
+    () => {
 
       const iframe =
         viewer.querySelector(
@@ -343,6 +343,18 @@ function setupReaderGestures() {
         iframe.contentDocument;
 
       if (!doc) return;
+
+      if (
+        doc.body.dataset
+          .gesturesLoaded
+      ) {
+
+        return;
+
+      }
+
+      doc.body.dataset
+        .gesturesLoaded = "true";
 
       doc.addEventListener(
         "click",
@@ -359,13 +371,9 @@ function setupReaderGestures() {
           const target =
             e.target;
 
-          const tag =
-            target.tagName;
-
           if (
-            tag === "A" ||
-            tag === "BUTTON" ||
-            target.closest("a")
+            target.closest("a") ||
+            target.closest("button")
           ) {
 
             return;
