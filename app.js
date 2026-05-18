@@ -124,7 +124,7 @@ let controlsTimer;
 let fontSize =
   Number(
     localStorage.getItem(
-      "fontSize"
+      "beta-fontSize"
     )
   ) || 100;
 
@@ -435,7 +435,7 @@ function applyTheme() {
 
   const darkMode =
     localStorage.getItem(
-      "darkMode"
+      "beta-darkMode"
     ) === "true";
 
   document.body.classList.toggle(
