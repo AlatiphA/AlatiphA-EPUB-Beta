@@ -113,6 +113,17 @@ const footer =
     "footer"
   );
 
+const tapLayer =
+  document.getElementById(
+    "tapLayer"
+  );
+
+let controlsVisible = true;
+
+let hideControlsTimer;
+
+
+
 let rendition;
 let book;
 
@@ -332,14 +343,6 @@ function autoHideControls() {
 
 }
 
-const tapLayer =
-  document.getElementById(
-    "tapLayer"
-  );
-
-let controlsVisible = true;
-
-let hideControlsTimer;
 
 /* =========================
    SHOW CONTROLS
