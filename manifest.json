@@ -1,7 +1,7 @@
 {
-  "name": "EPUB Reader",
-  "short_name": "Reader Beta",
-  "start_url": "./index.html",
+  "name": "AlatiphA EPUB Beta",
+  "short_name": "EPUB Beta",
+  "start_url": "./index-beta.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#111111",
