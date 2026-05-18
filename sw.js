@@ -1,4 +1,4 @@
-const CACHE_NAME = "epub-reader-v20";
+const CACHE_NAME = "epub-reader-v21";
 
 const FILES_TO_CACHE = [
 
