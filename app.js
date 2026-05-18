@@ -296,14 +296,6 @@ function startReader() {
 
 }
 
-let controlsVisible = true;
-
-let controlsTimer;
-
-const tapLayer =
-  document.getElementById(
-    "tapLayer"
-  );
 
 /* =========================
    AUTO HIDE CONTROLS
@@ -391,7 +383,7 @@ function showControls() {
    TAP SCREEN TO RESTORE
 ========================= */
 
-tapLayer.addEventListener(
+viewer.addEventListener(
   "click",
   () => {
 
