@@ -499,18 +499,6 @@ footer.hideControls {
     translateY(100%);
 }
 
-
-
-#tapLayer {
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 5;
-
-  background: transparent;
-}
-
 /* =========================
    MOBILE
 ========================= */
