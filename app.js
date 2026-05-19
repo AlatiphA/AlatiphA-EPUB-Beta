@@ -399,11 +399,15 @@ function showControls() {
    TAP GESTURES
 ========================= */
 
+/* =========================
+   TAP GESTURES
+========================= */
+
 function setupTapGestures() {
 
   rendition.on(
     "rendered",
-    section => {
+    () => {
 
       const iframe =
         viewer.querySelector(
@@ -417,55 +421,102 @@ function setupTapGestures() {
 
       if (!doc) return;
 
-      /* REMOVE OLD LISTENER */
+      /* PREVENT DUPLICATE EVENTS */
 
       if (
-        doc._tapHandler
+        doc.body.dataset
+          .gestureLoaded === "true"
       ) {
 
-        doc.removeEventListener(
-          "click",
-          doc._tapHandler,
-          true
-        );
+        return;
 
       }
 
-      const tapHandler =
+      doc.body.dataset
+        .gestureLoaded =
+        "true";
+
+      let startX = 0;
+      let endX = 0;
+
+      /* =========================
+         TOUCH START
+      ========================= */
+
+      doc.addEventListener(
+        "touchstart",
         e => {
 
-          /* LET EPUB LINKS WORK */
-
-          const interactive =
-            e.target.closest(
-              "a, button, input, textarea, select"
-            );
-
-          if (interactive) {
+          if (
+            e.touches.length !== 1
+          ) {
 
             return;
 
           }
 
-          const width =
-            window.innerWidth;
+          startX =
+            e.touches[0].clientX;
 
-          const tapX =
-            e.clientX;
+        },
+        {
+          passive: true
+        }
+      );
 
-          const leftZone =
-            width * 0.25;
+      /* =========================
+         TOUCH END
+      ========================= */
 
-          const rightZone =
-            width * 0.75;
-
-          /* LEFT = PREV */
+      doc.addEventListener(
+        "touchend",
+        e => {
 
           if (
-            tapX < leftZone
+            e.changedTouches.length !== 1
           ) {
 
-            e.preventDefault();
+            return;
+
+          }
+
+          const target =
+            e.target;
+
+          /* ALLOW LINKS & FOOTNOTES */
+
+          if (
+            target.closest("a") ||
+            target.closest("button") ||
+            target.closest("input") ||
+            target.closest("select") ||
+            target.closest("textarea")
+          ) {
+
+            return;
+          }
+
+          endX =
+            e.changedTouches[0]
+              .clientX;
+
+          const diff =
+            endX - startX;
+
+          /* MINIMUM SWIPE */
+
+          if (
+            Math.abs(diff) < 60
+          ) {
+
+            showControls();
+            return;
+
+          }
+
+          /* SWIPE RIGHT = PREV */
+
+          if (diff > 0) {
 
             rendition.prev();
 
@@ -475,35 +526,20 @@ function setupTapGestures() {
 
           }
 
-          /* RIGHT = NEXT */
+          /* SWIPE LEFT = NEXT */
 
-          if (
-            tapX > rightZone
-          ) {
-
-            e.preventDefault();
+          if (diff < 0) {
 
             rendition.next();
 
             showControls();
 
-            return;
-
           }
 
-          /* CENTER = SHOW CONTROLS */
-
-          showControls();
-
-        };
-
-      doc._tapHandler =
-        tapHandler;
-
-      doc.addEventListener(
-        "click",
-        tapHandler,
-        true
+        },
+        {
+          passive: true
+        }
       );
 
     }
@@ -894,6 +930,17 @@ bottomThemeBtn.addEventListener(
   }
 );
 
+prevPage.addEventListener(
+  "click",
+  () => {
+
+    rendition.prev();
+
+    showControls();
+
+  }
+);
+
 nextPage.addEventListener(
   "click",
   () => {
@@ -905,16 +952,6 @@ nextPage.addEventListener(
   }
 );
 
-prevPage.addEventListener(
-  "click",
-  () => {
-
-    rendition.prev();
-
-    showControls();
-
-  }
-);
 
 increaseFont.addEventListener(
   "click",
