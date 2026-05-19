@@ -237,8 +237,6 @@ rendition.themes.fontSize(fontSize + "%");
 // Initial theme
 applyTheme();
 
-  
-
   book.ready
     .then(async () => {
 
@@ -351,12 +349,28 @@ function applyTheme() {
   rendition.themes.select(isDark ? "dark" : "light");
 
   // CRITICAL: Force the current page to re-render with new theme
-  setTimeout(() => {
+  forceThemeRefresh(() => {
     const current = rendition.currentLocation();
     if (current && current.start && current.start.cfi) {
       rendition.display(current.start.cfi);
     }
   }, 80);
+}
+
+function forceThemeRefresh() {
+  if (!rendition) return;
+  
+  const isDark = localStorage.getItem("beta-darkMode") === "true";
+  rendition.themes.select(isDark ? "dark" : "light");
+  
+  // Re-display current position
+  setTimeout(() => {
+    rendition.reportLocation(); // triggers relocated
+    const loc = rendition.currentLocation();
+    if (loc?.start?.cfi) {
+      rendition.display(loc.start.cfi);
+    }
+  }, 100);
 }
 
 function initThemes() {
