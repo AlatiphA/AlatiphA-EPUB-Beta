@@ -238,7 +238,7 @@ function startReader() {
     fontSize + "%"
   );
 
-  applyTheme();
+  initThemes();
 
   setupGestures();
 
@@ -336,43 +336,95 @@ function startReader() {
 }
 
 /* =========================
-   THEME
+   THEME SETUP
 ========================= */
 
-function applyTheme() {
+function initThemes() {
 
-  const darkMode =
-    localStorage.getItem(
-      "beta-darkMode"
-    ) === "true";
+  if (!rendition) return;
 
-  document.body.classList.toggle(
-    "dark",
-    darkMode
+  rendition.themes.register(
+    "light",
+    {
+      body: {
+        background: "#ffffff",
+        color: "#111111",
+        padding: "20px 30px",
+        "line-height": "1.7",
+        "font-family":
+          "Arial, sans-serif"
+      },
+
+      a: {
+        color: "#1565c0"
+      }
+    }
   );
 
-  rendition.themes.select(
-    darkMode
-      ? "dark"
-      : "light"
+  rendition.themes.register(
+    "dark",
+    {
+      body: {
+        background: "#111111",
+        color: "#ffffff",
+        padding: "20px 30px",
+        "line-height": "1.7",
+        "font-family":
+          "Arial, sans-serif"
+      },
+
+      a: {
+        color: "#4dabff"
+      }
+    }
   );
 
   rendition.themes.fontSize(
     fontSize + "%"
   );
 
-  themeBtn.textContent =
-    darkMode
-      ? "🌙"
-      : "☀";
-
-  bottomThemeBtn.textContent =
-    darkMode
-      ? "🌙"
-      : "☀";
+  applyTheme();
 
 }
 
+/* =========================
+   APPLY THEME
+========================= */
+
+function applyTheme() {
+
+  const isDark =
+    localStorage.getItem(
+      "beta-darkMode"
+    ) === "true";
+
+  document.body.classList.toggle(
+    "dark",
+    isDark
+  );
+
+  const sun = "☀️";
+  const moon = "🌙";
+
+  themeBtn.textContent =
+    isDark
+      ? moon
+      : sun;
+
+  bottomThemeBtn.textContent =
+    isDark
+      ? moon
+      : sun;
+
+  if (!rendition) return;
+
+  rendition.themes.select(
+    isDark
+      ? "dark"
+      : "light"
+  );
+
+}
 /* =========================
    CONTROLS
 ========================= */
