@@ -240,6 +240,8 @@ function startReader() {
 
   initThemes();
 
+  setupLinkHandlers();
+
   setupGestures();
 
   autoHideControls();
@@ -425,6 +427,116 @@ function applyTheme() {
   );
 
 }
+
+
+/* =========================
+   HANDLE INTERNAL LINKS
+========================= */
+
+function setupLinkHandlers() {
+
+  rendition.on(
+    "rendered",
+    () => {
+
+      const iframe =
+        viewer.querySelector(
+          "iframe"
+        );
+
+      if (!iframe) return;
+
+      const doc =
+        iframe.contentDocument;
+
+      if (!doc) return;
+
+      /* PREVENT DUPLICATES */
+
+      if (
+        doc.body.dataset.linksReady ===
+        "true"
+      ) {
+
+        return;
+
+      }
+
+      doc.body.dataset.linksReady =
+        "true";
+
+      doc.addEventListener(
+        "click",
+        async e => {
+
+          const link =
+            e.target.closest("a");
+
+          if (!link) return;
+
+          const href =
+            link.getAttribute(
+              "href"
+            );
+
+          if (!href) return;
+
+          /* EXTERNAL LINKS */
+
+          if (
+            href.startsWith(
+              "http://"
+            ) ||
+
+            href.startsWith(
+              "https://"
+            )
+          ) {
+
+            window.open(
+              href,
+              "_blank"
+            );
+
+            return;
+
+          }
+
+          /* INTERNAL EPUB LINKS */
+
+          e.preventDefault();
+
+          e.stopPropagation();
+
+          try {
+
+            await rendition.display(
+              href
+            );
+
+            showControls();
+
+          }
+
+          catch (error) {
+
+            console.error(
+              "Link navigation failed:",
+              error
+            );
+
+          }
+
+        },
+        true
+      );
+
+    }
+  );
+
+}
+
+
 /* =========================
    CONTROLS
 ========================= */
