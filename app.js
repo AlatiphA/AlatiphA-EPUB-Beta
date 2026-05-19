@@ -391,6 +391,10 @@ function showControls() {
    TAP GESTURES
 ========================= */
 
+/* =========================
+   TAP GESTURES
+========================= */
+
 function setupTapGestures() {
 
   rendition.on(
@@ -411,7 +415,7 @@ function setupTapGestures() {
 
       if (
         doc.body.dataset
-          .gesturesLoaded
+          .gesturesReady
       ) {
 
         return;
@@ -419,43 +423,34 @@ function setupTapGestures() {
       }
 
       doc.body.dataset
-        .gesturesLoaded =
+        .gesturesReady =
         "true";
 
-      let tapping = false;
+      let locked = false;
 
       doc.addEventListener(
-        "click",
+        "pointerup",
         e => {
 
-          if (tapping)
+          if (locked)
             return;
+
+          /* DO NOT BREAK LINKS */
 
           const target =
             e.target;
 
-          /* KEEP LINKS WORKING */
-
           if (
             target.closest("a") ||
             target.closest("button") ||
-            target.closest("input")
+            target.closest("input") ||
+            target.closest("select") ||
+            target.closest("textarea")
           ) {
 
             return;
 
           }
-
-          tapping = true;
-
-          setTimeout(
-            () => {
-
-              tapping = false;
-
-            },
-            300
-          );
 
           const width =
             window.innerWidth;
@@ -464,12 +459,23 @@ function setupTapGestures() {
             e.clientX;
 
           const leftZone =
-            width * 0.30;
+            width * 0.25;
 
           const rightZone =
-            width * 0.70;
+            width * 0.75;
 
-          /* LEFT = PREV */
+          locked = true;
+
+          setTimeout(
+            () => {
+
+              locked = false;
+
+            },
+            350
+          );
+
+          /* PREV */
 
           if (
             tapX < leftZone
@@ -483,7 +489,7 @@ function setupTapGestures() {
 
           }
 
-          /* RIGHT = NEXT */
+          /* NEXT */
 
           if (
             tapX > rightZone
@@ -497,12 +503,12 @@ function setupTapGestures() {
 
           }
 
-          /* CENTER = CONTROLS */
+          /* CENTER */
 
           showControls();
 
         },
-        true
+        false
       );
 
     }
