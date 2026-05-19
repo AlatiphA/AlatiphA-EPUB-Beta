@@ -234,13 +234,13 @@ function startReader() {
     }
   );
 
+  setupLinkHandlers(); 
+
   rendition.themes.fontSize(
     fontSize + "%"
   );
 
   initThemes();
-
-  setupLinkHandlers();
 
   setupGestures();
 
