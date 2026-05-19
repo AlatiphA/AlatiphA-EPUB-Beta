@@ -189,6 +189,16 @@ function startReader() {
       }
     );
 
+
+  initThemes();
+
+  setupLinkHandlers();
+
+  setupGestures();
+
+  autoHideControls();
+  
+
   const savedLocation =
     localStorage.getItem(
       "beta-epub-location"
@@ -198,53 +208,36 @@ function startReader() {
     savedLocation || undefined
   );
 
-  rendition.themes.register(
-    "light",
-    {
-      body: {
-        background: "#ffffff",
-        color: "#111111",
-        padding: "20px",
-        "line-height": "1.7",
-        "font-family":
-          "Arial, sans-serif"
-      },
+  // After rendition = book.renderTo(...)
 
-      a: {
-        color: "#1565c0"
-      }
-    }
-  );
+rendition.themes.register("light", {
+  body: {
+    background: "#ffffff",
+    color: "#111111",
+    padding: "20px 30px",
+    "line-height": "1.8",
+    "font-family": "Arial, sans-serif"
+  },
+  a: { color: "#1565c0" }
+});
 
-  rendition.themes.register(
-    "dark",
-    {
-      body: {
-        background: "#111111",
-        color: "#ffffff",
-        padding: "20px",
-        "line-height": "1.7",
-        "font-family":
-          "Arial, sans-serif"
-      },
+rendition.themes.register("dark", {
+  body: {
+    background: "#111111",
+    color: "#eeeeee",
+    padding: "20px 30px",
+    "line-height": "1.8",
+    "font-family": "Arial, sans-serif"
+  },
+  a: { color: "#4dabff" }
+});
 
-      a: {
-        color: "#4dabff"
-      }
-    }
-  );
+rendition.themes.fontSize(fontSize + "%");
 
-  rendition.themes.fontSize(
-    fontSize + "%"
-  );
+// Initial theme
+applyTheme();
 
-  initThemes();
-
-  setupLinkHandlers();
-
-  setupGestures();
-
-  autoHideControls();
+  
 
   book.ready
     .then(async () => {
@@ -344,10 +337,9 @@ function startReader() {
 function applyTheme() {
   const isDark = localStorage.getItem("beta-darkMode") === "true";
 
-  // Update UI (sidebar, header, footer, etc.)
+  // Outer UI
   document.body.classList.toggle("dark", isDark);
 
-  // Update button icons (fixed encoding)
   const sun = "☀️";
   const moon = "🌙";
   themeBtn.textContent = isDark ? moon : sun;
@@ -355,11 +347,16 @@ function applyTheme() {
 
   if (!rendition) return;
 
-  // Apply epub.js theme
+  // Switch epub.js theme
   rendition.themes.select(isDark ? "dark" : "light");
 
-  // Font size should only be set once (moved out of here)
-  // rendition.themes.fontSize(fontSize + "%");  ← remove from here
+  // CRITICAL: Force the current page to re-render with new theme
+  setTimeout(() => {
+    const current = rendition.currentLocation();
+    if (current && current.start && current.start.cfi) {
+      rendition.display(current.start.cfi);
+    }
+  }, 80);
 }
 
 function initThemes() {
