@@ -395,11 +395,15 @@ function showControls() {
    TAP GESTURES
 ========================= */
 
+/* =========================
+   TAP GESTURES
+========================= */
+
 function setupTapGestures() {
 
   rendition.on(
     "rendered",
-    () => {
+    section => {
 
       const iframe =
         viewer.querySelector(
@@ -413,40 +417,31 @@ function setupTapGestures() {
 
       if (!doc) return;
 
+      /* REMOVE OLD LISTENER */
+
       if (
-        doc.body.dataset
-          .gesturesReady
+        doc._tapHandler
       ) {
 
-        return;
+        doc.removeEventListener(
+          "click",
+          doc._tapHandler,
+          true
+        );
 
       }
 
-      doc.body.dataset
-        .gesturesReady =
-        "true";
-
-      let locked = false;
-
-      doc.addEventListener(
-        "pointerup",
+      const tapHandler =
         e => {
 
-          if (locked)
-            return;
+          /* LET EPUB LINKS WORK */
 
-          /* DO NOT BREAK LINKS */
+          const interactive =
+            e.target.closest(
+              "a, button, input, textarea, select"
+            );
 
-          const target =
-            e.target;
-
-          if (
-            target.closest("a") ||
-            target.closest("button") ||
-            target.closest("input") ||
-            target.closest("select") ||
-            target.closest("textarea")
-          ) {
+          if (interactive) {
 
             return;
 
@@ -464,22 +459,13 @@ function setupTapGestures() {
           const rightZone =
             width * 0.75;
 
-          locked = true;
-
-          setTimeout(
-            () => {
-
-              locked = false;
-
-            },
-            350
-          );
-
-          /* PREV */
+          /* LEFT = PREV */
 
           if (
             tapX < leftZone
           ) {
+
+            e.preventDefault();
 
             rendition.prev();
 
@@ -489,11 +475,13 @@ function setupTapGestures() {
 
           }
 
-          /* NEXT */
+          /* RIGHT = NEXT */
 
           if (
             tapX > rightZone
           ) {
+
+            e.preventDefault();
 
             rendition.next();
 
@@ -503,12 +491,19 @@ function setupTapGestures() {
 
           }
 
-          /* CENTER */
+          /* CENTER = SHOW CONTROLS */
 
           showControls();
 
-        },
-        false
+        };
+
+      doc._tapHandler =
+        tapHandler;
+
+      doc.addEventListener(
+        "click",
+        tapHandler,
+        true
       );
 
     }
@@ -895,6 +890,17 @@ bottomThemeBtn.addEventListener(
   () => {
 
     themeBtn.click();
+
+  }
+);
+
+nextPage.addEventListener(
+  "click",
+  () => {
+
+    rendition.next();
+
+    showControls();
 
   }
 );
