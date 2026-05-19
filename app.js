@@ -202,11 +202,10 @@ function startReader() {
     fontSize + "%"
   );
 
-  menuBtn.textContent = "☰";
-  bottomMenuBtn.textContent = "☰";
+  menuBtn.textContent = "â˜°";
+  bottomMenuBtn.textContent = "â˜°";
 
   applyTheme();
-  setupTapGestures();
   autoHideControls();
 
   book.ready
@@ -387,7 +386,6 @@ function showControls() {
 
 }
 
-
 /* =========================
    TAP VIEWER TO RESTORE
 ========================= */
@@ -449,13 +447,13 @@ function applyTheme() {
 
   themeBtn.textContent =
     darkMode
-      ? "🌙"
-      : "☀";
+      ? "ðŸŒ™"
+      : "â˜€";
 
   bottomThemeBtn.textContent =
     darkMode
-      ? "🌙"
-      : "☀";
+      ? "ðŸŒ™"
+      : "â˜€";
 
   if (!rendition) return;
 
@@ -728,13 +726,13 @@ menuBtn.addEventListener(
 
     menuBtn.textContent =
       isOpen
-        ? "☰"
-        : "☰";
+        ? "â˜°"
+        : "â˜°";
 
     bottomMenuBtn.textContent =
       isOpen
-        ? "☰"
-        : "☰";
+        ? "â˜°"
+        : "â˜°";
 
     showControls();
 
@@ -781,18 +779,6 @@ prevPage.addEventListener(
 
   }
 );
-
-nextPage.addEventListener(
-  "click",
-  () => {
-
-    rendition.next();
-
-    showControls();
-
-  }
-);
-
 
 increaseFont.addEventListener(
   "click",
