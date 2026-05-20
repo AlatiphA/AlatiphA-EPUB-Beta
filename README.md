@@ -70,7 +70,7 @@ Add screenshots here later.
 ### Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+git clone [https://github.com/AlatiphA/AlatiphA-EPUB-Beta git] 
 ```
 
 ---
