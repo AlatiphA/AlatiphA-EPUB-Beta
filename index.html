@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="description" content="A beautiful PWA EPUB reader with footnote and link support" />
+  <title>Folio — EPUB Reader</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── SPLASH / DROP ZONE ─────────────────────────────────── -->
+<div id="splash" class="screen active">
+  <div class="splash-bg"></div>
+  <div class="splash-content">
+    <div class="logo">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <rect x="8" y="4" width="28" height="36" rx="3" fill="#e8c97a" opacity="0.15"/>
+        <rect x="12" y="8" width="28" height="36" rx="3" fill="#e8c97a" opacity="0.3"/>
+        <rect x="6" y="4" width="28" height="36" rx="3" stroke="#e8c97a" stroke-width="1.5" fill="none"/>
+        <line x1="12" y1="14" x2="28" y2="14" stroke="#e8c97a" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="12" y1="20" x2="28" y2="20" stroke="#e8c97a" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="12" y1="26" x2="22" y2="26" stroke="#e8c97a" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="splash-title">Folio</h1>
+    <p class="splash-sub">Your personal EPUB reader</p>
+
+    <div id="dropzone" class="dropzone">
+      <div class="dz-inner">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <path d="M20 28V12M20 12L13 19M20 12L27 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 30h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <p>Drop an <strong>.epub</strong> file here</p>
+        <span>or</span>
+        <label class="btn-choose" for="file-input">Browse file</label>
+        <input type="file" id="file-input" accept=".epub" hidden />
+      </div>
+    </div>
+
+    <div id="library" class="library hidden">
+      <h3>Recent Books</h3>
+      <ul id="library-list"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── READER ─────────────────────────────────────────────── -->
+<div id="reader-screen" class="screen">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button id="btn-back" class="icon-btn" title="Back to library" aria-label="Back to library">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13 4L7 10L13 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="book-info">
+      <span id="book-title" class="book-title-label"></span>
+    </div>
+    <div class="topbar-actions">
+      <button id="btn-toc" class="icon-btn" title="Table of Contents" aria-label="Table of Contents">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h8M4 14h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <button id="btn-settings" class="icon-btn" title="Settings" aria-label="Settings">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M10 3v1.5M10 15.5V17M3 10h1.5M15.5 10H17M4.93 4.93l1.06 1.06M14 14l1.06 1.06M4.93 15.07l1.06-1.06M14 6l1.06-1.06" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Progress bar -->
+  <div class="progress-bar-wrap">
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+
+  <!-- Viewer area -->
+  <main class="viewer-wrap">
+    <button id="btn-prev" class="nav-btn nav-prev" aria-label="Previous page">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div id="viewer"></div>
+    <button id="btn-next" class="nav-btn nav-next" aria-label="Next page">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </main>
+
+  <!-- Bottom info -->
+  <footer class="reader-footer">
+    <span id="loc-label" class="loc-label"></span>
+    <div class="footer-nav">
+      <button id="btn-prev-foot" class="text-btn">← Prev</button>
+      <button id="btn-next-foot" class="text-btn">Next →</button>
+    </div>
+    <span id="chapter-label" class="chapter-label"></span>
+  </footer>
+</div>
+
+<!-- ── TOC PANEL ──────────────────────────────────────────── -->
+<aside id="toc-panel" class="side-panel" aria-label="Table of Contents" aria-hidden="true">
+  <div class="panel-header">
+    <h2>Contents</h2>
+    <button id="btn-close-toc" class="icon-btn" aria-label="Close TOC">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <nav id="toc-nav" class="toc-nav"></nav>
+</aside>
+
+<!-- ── SETTINGS PANEL ─────────────────────────────────────── -->
+<aside id="settings-panel" class="side-panel settings-panel" aria-label="Settings" aria-hidden="true">
+  <div class="panel-header">
+    <h2>Settings</h2>
+    <button id="btn-close-settings" class="icon-btn" aria-label="Close Settings">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="settings-body">
+    <div class="setting-group">
+      <label>Theme</label>
+      <div class="theme-options">
+        <button class="theme-btn active" data-theme="dark">Dark</button>
+        <button class="theme-btn" data-theme="sepia">Sepia</button>
+        <button class="theme-btn" data-theme="light">Light</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <label>Font Size</label>
+      <div class="size-control">
+        <button id="font-dec" class="size-btn">A−</button>
+        <span id="font-size-label">100%</span>
+        <button id="font-inc" class="size-btn">A+</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <label>Line Spacing</label>
+      <div class="size-control">
+        <button id="line-dec" class="size-btn">−</button>
+        <span id="line-size-label">1.6</span>
+        <button id="line-inc" class="size-btn">+</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <label>Font Family</label>
+      <select id="font-family-select" class="setting-select">
+        <option value="Lora, serif">Lora (Serif)</option>
+        <option value="'Playfair Display', serif">Playfair Display</option>
+        <option value="Georgia, serif">Georgia</option>
+        <option value="system-ui, sans-serif">System UI</option>
+      </select>
+    </div>
+  </div>
+</aside>
+
+<!-- ── FOOTNOTE POPUP ─────────────────────────────────────── -->
+<div id="footnote-popup" class="footnote-popup hidden" role="dialog" aria-label="Footnote">
+  <div class="footnote-header">
+    <span class="footnote-label">Footnote</span>
+    <button id="btn-close-footnote" class="icon-btn sm" aria-label="Close footnote">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div id="footnote-content" class="footnote-content"></div>
+</div>
+
+<!-- ── OVERLAY ────────────────────────────────────────────── -->
+<div id="overlay" class="overlay hidden"></div>
+
+<!-- ── TOAST ─────────────────────────────────────────────── -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
