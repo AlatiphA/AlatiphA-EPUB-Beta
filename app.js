@@ -261,6 +261,318 @@ function startReader() {
 
     });
 
+  // ── INTERACTIVE LINKS, FOOTNOTES & TOC ──────────────────
+  rendition.on(
+    "rendered",
+    (section, view) => {
+
+      const doc =
+        view?.document ||
+        view?.iframe?.contentDocument;
+
+      if (!doc) return;
+
+      // Handle every <a> inside the EPUB iframe
+      doc.querySelectorAll(
+        "a[href]"
+      ).forEach(anchor => {
+
+        anchor.style.cursor =
+          "pointer";
+
+        anchor.addEventListener(
+          "click",
+          e => {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const href =
+              anchor.getAttribute(
+                "href"
+              ) || "";
+
+            const epubType =
+              anchor.getAttribute(
+                "epub:type"
+              ) || "";
+
+            const role =
+              anchor.getAttribute(
+                "role"
+              ) || "";
+
+            // ── Footnote / endnote ref ──
+            const isNoteRef =
+              epubType.includes(
+                "noteref"
+              ) ||
+              role.includes(
+                "doc-noteref"
+              ) ||
+              anchor.classList
+                .contains(
+                  "footnote"
+                ) ||
+              anchor.classList
+                .contains(
+                  "endnote"
+                );
+
+            if (
+              isNoteRef &&
+              href.startsWith("#")
+            ) {
+
+              const targetId =
+                href.slice(1);
+
+              const targetEl =
+                doc.getElementById(
+                  targetId
+                );
+
+              if (targetEl) {
+
+                showFootnotePopup(
+                  targetEl
+                );
+
+                return;
+
+              }
+
+            }
+
+            // ── Fragment-only link (#id) ──
+            if (
+              href.startsWith("#")
+            ) {
+
+              const targetId =
+                href.slice(1);
+
+              const targetEl =
+                doc.getElementById(
+                  targetId
+                );
+
+              if (targetEl) {
+
+                showFootnotePopup(
+                  targetEl
+                );
+
+              }
+
+              return;
+
+            }
+
+            // ── External link ──
+            if (
+              /^https?:\/\//.test(
+                href
+              )
+            ) {
+
+              if (
+                confirm(
+                  `Open external link?\n${href}`
+                )
+              ) {
+
+                window.open(
+                  href,
+                  "_blank",
+                  "noopener"
+                );
+
+              }
+
+              return;
+
+            }
+
+            // ── Internal navigation ──
+            rendition
+              .display(href)
+              .catch(err =>
+                console.error(
+                  "Nav error:",
+                  err
+                )
+              );
+
+          }
+        );
+
+      });
+
+    }
+  );
+
+  // ── FOOTNOTE POPUP ───────────────────────────────────────
+  function showFootnotePopup(el) {
+
+    // Remove existing popup if any
+    const existing =
+      document.getElementById(
+        "footnotePopup"
+      );
+
+    if (existing)
+      existing.remove();
+
+    const popup =
+      document.createElement(
+        "div"
+      );
+
+    popup.id = "footnotePopup";
+
+    Object.assign(
+      popup.style,
+      {
+        position: "fixed",
+        bottom: "70px",
+        left: "50%",
+        transform:
+          "translateX(-50%)",
+        width:
+          "min(500px, 90vw)",
+        background:
+          document.body.classList
+            .contains("dark")
+            ? "#1e1e1e"
+            : "#fffdf6",
+        color:
+          document.body.classList
+            .contains("dark")
+            ? "#eee"
+            : "#111",
+        border: "1px solid #888",
+        borderRadius: "10px",
+        boxShadow:
+          "0 8px 32px rgba(0,0,0,0.4)",
+        zIndex: "9999",
+        overflow: "hidden",
+        fontFamily: "Arial, sans-serif",
+        fontSize: "14px",
+        animation:
+          "fnPopUp 0.2s ease both",
+      }
+    );
+
+    // Inject keyframe once
+    if (
+      !document.getElementById(
+        "fnStyle"
+      )
+    ) {
+
+      const style =
+        document.createElement(
+          "style"
+        );
+
+      style.id = "fnStyle";
+
+      style.textContent = `
+        @keyframes fnPopUp {
+          from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+          }
+        }
+      `;
+
+      document.head.appendChild(
+        style
+      );
+
+    }
+
+    const clone =
+      el.cloneNode(true);
+
+    // Remove back-reference links
+    clone.querySelectorAll(
+      'a[epub\\:type="backlink"], a.backlink'
+    ).forEach(a => a.remove());
+
+    popup.innerHTML = `
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:8px 12px;
+        border-bottom:1px solid #555;
+        font-size:11px;
+        text-transform:uppercase;
+        letter-spacing:0.08em;
+        color:#aaa;
+      ">
+        <span>Footnote</span>
+        <button id="closeFnBtn" style="
+          background:none;border:none;
+          cursor:pointer;color:inherit;
+          font-size:16px;line-height:1;
+          padding:2px 4px;
+        ">✕</button>
+      </div>
+      <div style="
+        padding:12px 14px;
+        max-height:180px;
+        overflow-y:auto;
+        line-height:1.6;
+      ">${clone.innerHTML}</div>
+    `;
+
+    document.body.appendChild(
+      popup
+    );
+
+    document
+      .getElementById(
+        "closeFnBtn"
+      )
+      .addEventListener(
+        "click",
+        () => popup.remove()
+      );
+
+    // Close on outside click
+    setTimeout(() => {
+
+      document.addEventListener(
+        "click",
+        function handler(e) {
+
+          if (
+            !popup.contains(e.target)
+          ) {
+
+            popup.remove();
+
+            document.removeEventListener(
+              "click",
+              handler
+            );
+
+          }
+
+        }
+      );
+
+    }, 100);
+
+  }
+
   rendition.on(
     "relocated",
     location => {
